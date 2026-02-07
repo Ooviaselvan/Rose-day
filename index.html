@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Rose Day ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Segoe UI',sans-serif;
+  background:radial-gradient(circle at top,#3a001a,#120008);
+  color:#ffd6e8;
+  overflow-x:hidden;
+}
+
+/* NAVBAR */
+nav{
+  position:fixed;
+  top:0;left:0;
+  width:100%;
+  height:70px;
+  padding:0 40px;
+  display:flex;
+  align-items:center;
+  background:rgba(0,0,0,.25);
+  backdrop-filter:blur(10px);
+  z-index:100;
+}
+nav h2{color:#ff4d88}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;
+  padding:110px 80px 60px;
+}
+.left{
+  width:60%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.date{letter-spacing:3px;color:#ff9dbb}
+.left h1{font-size:4rem;margin:18px 0}
+.left h1 span{color:#ff4d88}
+.subtitle{font-size:1.1rem;max-width:520px;opacity:.9}
+
+.btn{
+  margin-top:25px;
+  padding:14px 34px;
+  border-radius:32px;
+  background:#ff4d88;
+  border:none;
+  color:white;
+  font-size:1rem;
+  cursor:pointer;
+  box-shadow:0 0 25px #ff4d88;
+  width:fit-content;
+}
+
+/* POPUP */
+.popup{
+  position:fixed;
+  top:50%;
+  left:65%;              /* ← 10% forward from exact center */
+  transform:translate(-50%,-50%);
+  width:400px;
+  background:rgba(255,255,255,.08);
+  padding:26px;
+  border-radius:22px;
+  box-shadow:0 0 45px rgba(255,80,140,.6);
+  display:none;
+  text-align:center;
+  z-index:90;
+}
+
+/* IMAGE REVEAL */
+.popup img{
+  width:100%;
+  border-radius:18px;
+  margin:14px 0;
+  opacity:0;
+  transform:scale(.95);
+  animation:slowReveal 1.8s ease forwards;
+}
+@keyframes slowReveal{
+  to{opacity:1;transform:scale(1)}
+}
+
+.popup button{
+  margin:10px;
+  padding:12px 26px;
+  border-radius:25px;
+  border:none;
+  cursor:pointer;
+}
+.yes{background:#ff4d88;color:white}
+.no{background:#333;color:white}
+
+/* CONTINUOUS BACKGROUND PETALS */
+.petal{
+  position:fixed;
+  top:-40px;
+  font-size:20px;
+  animation:fall linear infinite;
+  pointer-events:none;
+  opacity:.6;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(360deg);opacity:0}
+}
+
+/* HEART BLAST */
+.heart{
+  position:fixed;
+  font-size:26px;
+  pointer-events:none;
+  animation:heartMove 1.8s ease-out forwards;
+  z-index:200;
+}
+@keyframes heartMove{
+  to{transform:translate(var(--x),var(--y)) scale(.5);opacity:0}
+}
+
+/* BOTTOM ROSE BLAST (YOUR CODE) */
+.rose{
+  position:fixed;
+  font-size:28px;
+  opacity:0;
+}
+@keyframes roseBlast{
+  0%{opacity:1;transform:translate(0,0) scale(1)}
+  30%{transform:translate(var(--x),-150px) scale(1.3)}
+  60%{transform:translate(var(--x),-250px) rotate(10deg)}
+  100%{transform:translate(var(--x),-60vh) rotate(-10deg) scale(.8);opacity:0}
+}
+
+/* FINAL SCATTER */
+.scatter{
+  position:fixed;
+  font-size:26px;
+  animation:scatter 6s linear forwards;
+  pointer-events:none;
+}
+@keyframes scatter{
+  to{transform:translate(var(--x),var(--y)) rotate(360deg);opacity:0}
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:40px 20px;
+  background:linear-gradient(to top,#2a0014,transparent);
+}
+footer p:first-child{font-size:1.2rem;color:#ff9dbb}
+footer p:last-child{opacity:.8;margin-top:6px}
+</style>
+</head>
+
+<body>
+
+<nav><h2>🌹 Rose Day</h2></nav>
+
+<section class="hero">
+  <div class="left">
+    <div class="date">FEBRUARY 7TH, 2026</div>
+    <h1>Happy <span>Rose Day</span></h1>
+    <p class="subtitle">Express your love with the timeless beauty of roses</p>
+    <button class="btn" onclick="openPopup()">Explore Roses</button>
+  </div>
+</section>
+
+<div class="popup" id="popup">
+  <h3>Will you love me?</h3>
+  <button class="no" onclick="sad()">No</button>
+  <button class="yes" onclick="step2(event)">Yes</button>
+</div>
+
+<footer>
+  <p>“Love grows where roses bloom.”</p>
+  <p>Happy Rose Day ❤️</p>
+</footer>
+
+<script>
+/* Background petals */
+setInterval(()=>{
+  const p=document.createElement("div");
+  p.className="petal";
+  p.innerText="🌸";
+  p.style.left=Math.random()*100+"vw";
+  p.style.animationDuration=(Math.random()*6+8)+"s";
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),15000);
+},700);
+
+function openPopup(){popup.style.display="block"}
+function sad(){}
+
+/* STEP 1 YES */
+function step2(e){
+  heartBlast(e.target);
+  bottomBlast();
+
+  popup.innerHTML=`
+    <img src="image1.jpg">
+    <p>Can you accept my love?</p>
+    <button class="no" onclick="sad()">No</button>
+    <button class="yes" onclick="final(event)">Yes</button>
+  `;
+}
+
+/* FINAL YES */
+function final(e){
+  heartBlast(e.target);
+  bottomBlast();
+  scatter();
+
+  popup.innerHTML=`
+    <img src="image2.jpg">
+    <h2>🌹 Happy Rose Day</h2>
+    <div style="margin:10px 0;color:#ff9dbb">──────── ❤️ ────────</div>
+    <p>Love you Abima 💕</p>
+  `;
+}
+
+/* HEART SHAPE */
+function heartBlast(btn){
+  const r=btn.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top;
+
+  for(let t=0;t<Math.PI*2;t+=0.3){
+    const x=16*Math.pow(Math.sin(t),3);
+    const y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText="🌹";
+    h.style.left=cx+"px";
+    h.style.top=cy+"px";
+    h.style.setProperty("--x",x*15+"px");
+    h.style.setProperty("--y",y*15+"px");
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),1800);
+  }
+}
+
+/* YOUR BOTTOM BLAST */
+function bottomBlast(){
+  const corners=[{bottom:"0px",left:"0px"},{bottom:"0px",right:"0px"}];
+  const start=Date.now();
+  const interval=setInterval(()=>{
+    if(Date.now()-start>3000){clearInterval(interval);return;}
+    corners.forEach(c=>{
+      const r=document.createElement("div");
+      r.className="rose";
+      r.innerText="🌹";
+      Object.assign(r.style,c);
+      r.style.setProperty("--x",(Math.random()*200-100)+"px");
+      r.style.animation="roseBlast 3s ease-out forwards";
+      document.body.appendChild(r);
+      setTimeout(()=>r.remove(),3000);
+    });
+  },150);
+}
+
+/* FINAL SCATTER */
+function scatter(){
+  for(let i=0;i<28;i++){
+    const s=document.createElement("div");
+    s.className="scatter";
+    s.innerText="🌹";
+    s.style.left=Math.random()*100+"vw";
+    s.style.top=Math.random()*100+"vh";
+    s.style.setProperty("--x",(Math.random()*600-300)+"px");
+    s.style.setProperty("--y",(Math.random()*600-300)+"px");
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),6000);
+  }
+}
+</script>
+
+</body>
+</html>
