@@ -64,7 +64,7 @@ nav h2{color:#ff4d88}
 .popup{
   position:fixed;
   top:50%;
-  left:65%;              /* ← 10% forward from exact center */
+  left:65%;
   transform:translate(-50%,-50%);
   width:400px;
   background:rgba(255,255,255,.08);
@@ -99,6 +99,12 @@ nav h2{color:#ff4d88}
 .yes{background:#ff4d88;color:white}
 .no{background:#333;color:white}
 
+.msg{
+  margin-top:8px;
+  color:#ff9dbb;
+  font-size:.95rem;
+}
+
 /* CONTINUOUS BACKGROUND PETALS */
 .petal{
   position:fixed;
@@ -124,11 +130,12 @@ nav h2{color:#ff4d88}
   to{transform:translate(var(--x),var(--y)) scale(.5);opacity:0}
 }
 
-/* BOTTOM ROSE BLAST (YOUR CODE) */
+/* BOTTOM ROSE BLAST */
 .rose{
   position:fixed;
   font-size:28px;
   opacity:0;
+  z-index:300;
 }
 @keyframes roseBlast{
   0%{opacity:1;transform:translate(0,0) scale(1)}
@@ -137,71 +144,35 @@ nav h2{color:#ff4d88}
   100%{transform:translate(var(--x),-60vh) rotate(-10deg) scale(.8);opacity:0}
 }
 
-/* =========================
-   MOBILE RESPONSIVE FIXES
-========================= */
-@media (max-width: 768px){
+/* TYPING TEXT */
+.typing{
+  font-size:1.3rem;
+  text-align:center;
+  white-space:normal;
+  overflow-wrap:break-word;
+  margin-top:8px;
+  border-right:2px solid #ff6fa3;
+  display:inline-block;
+  padding-right:4px;
+}
 
-  nav{
-    padding:0 20px;
-    height:60px;
-  }
-
-  .hero{
-    flex-direction:column;
-    padding:90px 20px 40px;
-    text-align:center;
-  }
-
-  .left{
-    width:100%;
-    align-items:center;
-  }
-
-  .left h1{
-    font-size:2.6rem;
-  }
-
-  .subtitle{
-    max-width:100%;
-    font-size:1rem;
-  }
-
-  .btn{
-    padding:14px 28px;
-    font-size:1rem;
-  }
-
-  /* POPUP CENTERED ON MOBILE */
+/* MOBILE */
+@media (max-width:768px){
+  .hero{flex-direction:column;padding:90px 20px 40px;text-align:center}
+  .left{width:100%;align-items:center}
+  .left h1{font-size:2.6rem}
   .popup{
     left:50%;
     top:55%;
-    width:90%;
+    width:92%;
     max-width:360px;
-    transform:translate(-50%,-50%);
-    transition: all 0.4s ease;
-
   }
-
-  .popup img{
-    max-height:320px;
-    object-fit:cover;
-  }
-
-  .popup button{
-    width:100%;
-    margin:8px 0;
-  }
-
-  footer{
-    padding:30px 15px;
-  }
-
-  footer p:first-child{
-    font-size:1.05rem;
+  .popup button{width:100%}
+  .typing{
+    font-size:1.4rem;
+    line-height:1.4;
   }
 }
-
 
 /* FINAL SCATTER */
 .scatter{
@@ -220,8 +191,6 @@ footer{
   padding:40px 20px;
   background:linear-gradient(to top,#2a0014,transparent);
 }
-footer p:first-child{font-size:1.2rem;color:#ff9dbb}
-footer p:last-child{opacity:.8;margin-top:6px}
 </style>
 </head>
 
@@ -242,6 +211,7 @@ footer p:last-child{opacity:.8;margin-top:6px}
   <h3>Will you love me?</h3>
   <button class="no" onclick="sad()">No</button>
   <button class="yes" onclick="step2(event)">Yes</button>
+  <div class="msg" id="msg"></div>
 </div>
 
 <footer>
@@ -261,41 +231,55 @@ setInterval(()=>{
   setTimeout(()=>p.remove(),15000);
 },700);
 
-function openPopup(){popup.style.display="block"}
-function sad(){}
+function vibrateHeart(){
+  if(navigator.vibrate){
+    navigator.vibrate([120,60,120,60,180]);
+  }
+}
+
+function openPopup(){ popup.style.display="block"; }
+
+/* NO BUTTON – INLINE TEXT (NO POPUP) */
+function sad(){
+  document.getElementById("msg").innerText =
+    "Unaku enmela pasame illa 😔";
+}
 
 /* STEP 1 YES */
 function step2(e){
+  vibrateHeart();
   heartBlast(e.target);
-  bottomBlast();
+  bottomRosePotBlast();
 
   popup.innerHTML=`
     <img src="image1.jpg">
     <p>Can you accept my love?</p>
     <button class="no" onclick="sad()">No</button>
     <button class="yes" onclick="final(event)">Yes</button>
+    <div class="msg" id="msg"></div>
   `;
 }
 
 /* FINAL YES */
 function final(e){
+  vibrateHeart();
   heartBlast(e.target);
-  bottomBlast();
+  bottomRosePotBlast();
   scatter();
 
   popup.innerHTML=`
     <img src="image2.jpg">
     <h2>🌹 Happy Rose Day</h2>
-    <div style="margin:10px 0;color:#ff9dbb">──────── ❤️ ────────</div>
-    <p>Love you Abima 💕</p>
+    <div>──── ❤️ ────</div>
+    <p class="typing" id="typingText"></p>
   `;
+  setTimeout(()=>typeText("Love you Abima ❤️","typingText",120),600);
 }
 
 /* HEART SHAPE */
 function heartBlast(btn){
   const r=btn.getBoundingClientRect();
   const cx=r.left+r.width/2, cy=r.top;
-
   for(let t=0;t<Math.PI*2;t+=0.3){
     const x=16*Math.pow(Math.sin(t),3);
     const y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
@@ -311,12 +295,12 @@ function heartBlast(btn){
   }
 }
 
-/* YOUR BOTTOM BLAST */
-function bottomBlast(){
-  const corners=[{bottom:"0px",left:"0px"},{bottom:"0px",right:"0px"}];
+/* BOTTOM FLOWER POT BLAST */
+function bottomRosePotBlast(){
+  const corners=[{bottom:"0",left:"0"},{bottom:"0",right:"0"}];
   const start=Date.now();
   const interval=setInterval(()=>{
-    if(Date.now()-start>3000){clearInterval(interval);return;}
+    if(Date.now()-start>4000){clearInterval(interval);return;}
     corners.forEach(c=>{
       const r=document.createElement("div");
       r.className="rose";
@@ -343,6 +327,16 @@ function scatter(){
     document.body.appendChild(s);
     setTimeout(()=>s.remove(),6000);
   }
+}
+
+/* TYPING */
+function typeText(text,id,speed){
+  const el=document.getElementById(id);
+  let i=0;
+  const t=setInterval(()=>{
+    el.textContent+=text[i++];
+    if(i===text.length) clearInterval(t);
+  },speed);
 }
 </script>
 
