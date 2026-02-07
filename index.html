@@ -76,6 +76,30 @@ nav h2{color:#ff4d88}
   z-index:90;
 }
 
+/* Glass blur container to prevent text overlap */
+.glass-border{
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 22px;
+  padding: 16px;
+  margin-top: 10px;
+}
+
+.glass-border img{
+  width: 100%;
+  border-radius: 16px;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.glass-border h2,
+.glass-border p,
+.glass-border .typing{
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+
 /* IMAGE REVEAL */
 .popup img{
   width:100%;
@@ -252,12 +276,16 @@ function step2(e){
   bottomRosePotBlast();
 
   popup.innerHTML=`
+  <div class="glass-border">
     <img src="image1.jpg">
     <p>Can you accept my love?</p>
-    <button class="no" onclick="sad()">No</button>
-    <button class="yes" onclick="final(event)">Yes</button>
-    <div class="msg" id="msg"></div>
-  `;
+  </div>
+
+  <button class="no" onclick="sad()">No</button>
+  <button class="yes" onclick="final(event)">Yes</button>
+  <div class="msg" id="msg"></div>
+`;
+
 }
 
 /* FINAL YES */
@@ -268,11 +296,17 @@ function final(e){
   scatter();
 
   popup.innerHTML=`
+  <div class="glass-border">
     <img src="image2.jpg">
+
     <h2>🌹 Happy Rose Day</h2>
-    <div>──── ❤️ ────</div>
+
+    <div style="margin:8px 0;color:#ff9dbb">──── ❤️ ────</div>
+
     <p class="typing" id="typingText"></p>
-  `;
+  </div>
+`;
+
   setTimeout(()=>typeText("Love you Abima ❤️","typingText",120),600);
 }
 
